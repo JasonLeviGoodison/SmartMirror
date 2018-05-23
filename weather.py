@@ -26,6 +26,12 @@ class WeatherIntent:
             lat, lon = WeatherIntent.getLatLon(city);
             cityForcast = forecast(apiKey, lat, lon)
             print(cityForcast)
+        # at this point we have to lat, lon
+        url = 'https://api.darksky.net/forecast/' + apiKey + '/' + str(lat) + ',' + str(lon) + '?units=si'
+        r = requests.get(url)
+        j = json.loads(r.text)
+        print(j['currently'])
+        return j
         
 
 WeatherIntent.getWeather();
