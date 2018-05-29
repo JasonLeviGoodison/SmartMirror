@@ -30,8 +30,7 @@ class WeatherIntent:
         url = 'https://api.darksky.net/forecast/' + apiKey + '/' + str(lat) + ',' + str(lon) + '?units=si'
         r = requests.get(url)
         j = json.loads(r.text)
-        print(j['currently'])
-        return j
-        
-
-WeatherIntent.getWeather();
+        j = j['currently']
+        return { 'weather': j['summary'],
+                 'temp': j['temperature']
+        }

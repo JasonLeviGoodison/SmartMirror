@@ -5,7 +5,7 @@ import os;
 from response_strings import ResponseStrings;
 from command_match import CommandMatch;
 from intent_types import *;
-import WeatherIntent from weather;
+from weather import WeatherIntent;
 
 responseStrings = ResponseStrings();
 launchPhrase = 'hey Jarvis'
@@ -81,7 +81,10 @@ def dealWithCommand(command):
 
 #use the weather api to return the weather for the location
 def weatherCommand():
-    return WeatherIntent.getWeather();
+    weather = WeatherIntent.getWeather()
+    respond = "Right now, the weather is " + weather['weather'] + \
+        " and the temperature is " + str(int(weather['temp'])) + " degrees celsius"
+    return respond
 #use the google calendar api to get the days stuff on it
 def getCalendar():
     return "Meeting with Alex"
