@@ -30,7 +30,20 @@ class WeatherIntent:
         url = 'https://api.darksky.net/forecast/' + apiKey + '/' + str(lat) + ',' + str(lon) + '?units=si'
         r = requests.get(url)
         j = json.loads(r.text)
+        summary = j['hourly']['summary']
         j = j['currently']
+        cityName = WeatherIntent.getCityName(lat, lon);
         return { 'weather': j['summary'],
-                 'temp': j['temperature']
+                 'temp': j['temperature'],
+                 'icon': j['icon'],
+                 'city': cityName,
+                 'summary': summary
         }
+    @staticmethod
+    def getCityName(lat, lon):
+        url = 'https://darksky.net/rgeo?lat=' + str(lat) + '&lon=' + str(lon);
+        print(url)
+        r = requests.get(url)
+        j = json.loads(r.text)
+        city = j['name']
+        return city

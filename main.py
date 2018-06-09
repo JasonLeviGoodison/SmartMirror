@@ -92,11 +92,6 @@ def getCalendar():
 #use the google calendar api to set an event on day
 def setCalendar(day = "today", event = "event"):
     return responseStrings.set_calendar;
-
-#TODO Add in some temps and API calls
-def getWeatherIn(location):
-    weather = 'sunny'
-    return responseStrings.weather_is_begin + weather + responseStrings.weather_is_end + location;
-
-listenForInitCommand()
+weatherCommand();
+#listenForInitCommand()
 #dealWithCommand("Whats the weather like")
