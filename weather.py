@@ -30,7 +30,9 @@ class WeatherIntent:
         url = 'https://api.darksky.net/forecast/' + apiKey + '/' + str(lat) + ',' + str(lon) + '?units=si'
         r = requests.get(url)
         j = json.loads(r.text)
-        summary = j['hourly']['summary']
+        summary = ''
+        if (j['hourly']):
+            summary = j['hourly']['summary']
         j = j['currently']
         cityName = WeatherIntent.getCityName(lat, lon);
         return { 'weather': j['summary'],

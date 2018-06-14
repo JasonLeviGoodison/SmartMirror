@@ -6,21 +6,15 @@ from response_strings import ResponseStrings;
 from command_match import CommandMatch;
 from intent_types import *;
 from weather import WeatherIntent;
+from calendar_api import CalendarAPI;
 
 responseStrings = ResponseStrings();
 launchPhrase = 'hey Jarvis'
-
-'''feature ideas:
-    Google calendar integration: display any events for the day
-    not listening anymore sound
-'''
 
 def respond(sentence):
     tts = gTTS(text=sentence, lang='en-us');
     tts.save('sentence.mp3');
     os.system('mpg123 sentence.mp3');
-    #TODO see if removing is a good idea
-    os.system('rm sentence.mp3');
 
 def listening():
     os.system('mpg123 listening.mp3');
@@ -41,7 +35,6 @@ def listenForCommand():
             return 'timeout'
 
 def listenForInitCommand():
-    skip_hello = False;
     #Continually listen for a command
     while True:
         command = listenForCommand();
@@ -55,7 +48,6 @@ def listenForInitCommand():
 #harcoded commands for now, in future looking for an ML model
 # that can determine closest command (knn?)
 def dealWithCommand(command):
-    print(command, "!!")
     if (command == 'timeout'):
         respond(responseStrings.timeout)
         return;
@@ -69,7 +61,7 @@ def dealWithCommand(command):
     #elif commandIntent == intents.WHO_MADE_YOU:
     #    respond(responseStrings.creator);
     elif commandIntent == intents.GET_CALENDAR:
-        respond("i'll get you calendar");
+        respond(calendarCommand());
     elif commandIntent == intents.SET_CALENDAR:
         respond("i'll add that to your calendar");
     elif commandIntent == intents.PLAY_MUSIC:
@@ -85,13 +77,23 @@ def weatherCommand():
     respond = "Right now, the weather is " + weather['weather'] + \
         " and the temperature is " + str(int(weather['temp'])) + " degrees celsius"
     return respond
-#use the google calendar api to get the days stuff on it
-def getCalendar():
-    return "Meeting with Alex"
+
+#use the calendar api to return todays calendar
+def calendarCommand():
+    events = CalendarAPI.getToday()
+    respond = "Today you have ";
+    print(events)
+    if (events == []):
+        events = [{'summary': "nothing planned"}]
+    for i, event in enumerate(events):
+        if (i == 0):
+            respond += event['summary']
+        else:
+            respond += ' and ' + event['summary']
+    return respond
 
 #use the google calendar api to set an event on day
 def setCalendar(day = "today", event = "event"):
     return responseStrings.set_calendar;
-weatherCommand();
-#listenForInitCommand()
-#dealWithCommand("Whats the weather like")
+
+listenForInitCommand()
