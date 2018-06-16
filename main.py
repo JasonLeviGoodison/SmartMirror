@@ -62,6 +62,7 @@ def dealWithCommand(command):
             respond(calendarCommand(None))
     elif commandIntent == intents.SET_CALENDAR:
         CalendarAPI.setCalendarEvent({'summary': params[1], 'datetime': params[0][:params[0].index('T')]})
+        respond(responseStrings.set_calendar)
     elif commandIntent == intents.PLAY_MUSIC:
         respond("i'll play some music");
     elif commandIntent == intents.STOP:

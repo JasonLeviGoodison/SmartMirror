@@ -19,5 +19,5 @@ class ResponseStrings():
         self.creator = "Jason Goodison made me, all hail the creator"
 
         #calendar
-        self.set_calendar = "I added event to your calendar"
+        self.set_calendar = "I added that event to your calendar"
     
