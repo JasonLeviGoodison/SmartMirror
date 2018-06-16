@@ -5,3 +5,4 @@ class Intents():
     SET_CALENDAR = 4
     PLAY_MUSIC = 5
     STOP = 6
+    GET_CALENDAR_DAY = 7

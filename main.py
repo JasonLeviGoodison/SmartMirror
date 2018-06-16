@@ -39,31 +39,29 @@ def listenForInitCommand():
     while True:
         command = listenForCommand();
         if launchPhrase == command:
-            #if skip_hello is False:
             listening();
             command = listenForCommand();
             dealWithCommand(command);
 
-
-#harcoded commands for now, in future looking for an ML model
-# that can determine closest command (knn?)
 def dealWithCommand(command):
     if (command == 'timeout'):
         respond(responseStrings.timeout)
         return;
     intents = Intents();
-    commandIntent = CommandMatch.getIntent(command);
-    
+    commandIntent, params = CommandMatch.getIntent(command);
     if commandIntent == intents.GREETINGS:
         respond(responseStrings.nothing_much_you);
     elif commandIntent == intents.WEATHER:
         respond(weatherCommand());
     #elif commandIntent == intents.WHO_MADE_YOU:
     #    respond(responseStrings.creator);
-    elif commandIntent == intents.GET_CALENDAR:
-        respond(calendarCommand());
+    elif commandIntent == intents.GET_CALENDAR or commandIntent == intents.GET_CALENDAR_DAY:
+        if (params != None):
+            respond(calendarCommand(params[:params.index('T')]));
+        else:
+            respond(calendarCommand(None))
     elif commandIntent == intents.SET_CALENDAR:
-        respond("i'll add that to your calendar");
+        CalendarAPI.setCalendarEvent({'summary': params[1], 'datetime': params[0][:params[0].index('T')]})
     elif commandIntent == intents.PLAY_MUSIC:
         respond("i'll play some music");
     elif commandIntent == intents.STOP:
@@ -79,10 +77,13 @@ def weatherCommand():
     return respond
 
 #use the calendar api to return todays calendar
-def calendarCommand():
-    events = CalendarAPI.getToday()
-    respond = "Today you have ";
-    print(events)
+def calendarCommand(date):
+    respond = "You have ";
+    events = []
+    if (date != None):
+        events = CalendarAPI.getDay(date)
+    else:
+        events = CalendarAPI.getToday()
     if (events == []):
         events = [{'summary': "nothing planned"}]
     for i, event in enumerate(events):
@@ -90,7 +91,7 @@ def calendarCommand():
             respond += event['summary']
         else:
             respond += ' and ' + event['summary']
-    return respond
+    return respond + ' on your calendar'
 
 #use the google calendar api to set an event on day
 def setCalendar(day = "today", event = "event"):

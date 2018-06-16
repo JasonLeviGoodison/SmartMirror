@@ -3,6 +3,8 @@ import requests
 import base64
 import urllib
 from intent_types import *;
+import datetime
+intents = Intents()
 
 with open ("apikey.txt", "r") as myfile:
     apiKey=myfile.read().replace('\n','')
@@ -19,16 +21,18 @@ def sendMessageToWit(message):
     r = requests.post(url=url, data=json.dumps({}), headers=headers);
     return r.content
 
-def getIntentFromResponse(intent):
-    intents = Intents()
+def getIntentFromResponse(intent, params = {}):
     if (intent == "greetings"):
         return intents.GREETINGS
     elif (intent == "weather"):
         return intents.WEATHER
     elif (intent == 'get-calendar'):
-        return intents.GET_CALENDAR
+        try:
+            return intents.GET_CALENDAR_DAY, params[u'datetime'][0][u'value']
+        except KeyError:
+            return intents.GET_CALENDAR, None
     elif (intent == 'set-calendar'):
-        return intents.SET_CALENDAR
+        return prepareSetCalendar(params)
     elif (intent == 'play-music'):
         return intents.PLAY_MUSIC
     elif (intent == 'stop'):
@@ -37,16 +41,25 @@ def getIntentFromResponse(intent):
         return -1
 
 #intentTypes = Intents();
+def prepareSetCalendar(params):
+    value = params[u'reminder'][0][u'value']
+    try:
+        day = params[u'datetime'][0][u'value']
+        return intents.SET_CALENDAR, [day, value]
+    except KeyError:
+        day = unicode(datetime.date.today()) + 'T'
+        return intents.SET_CALENDAR, [day, value]
+
 class CommandMatch:
     @staticmethod
     def getIntent(command):
         witResponse = json.loads(sendMessageToWit(command));
-        print(witResponse[u'entities'])
-        if (witResponse[u'entities'] and witResponse[u'entities'][u'intent']):
-            #return witResponse.intent.value;
-            witIntent =  witResponse[u'entities'][u'intent'][0][u'value'];
-            print("intent: ", witIntent)
-            intent = getIntentFromResponse(witIntent)
-            print(intent)
-            return intent;
+        witResponse = witResponse[u'entities']
+        if (u'intent' in witResponse):
+            witIntent =  witResponse[u'intent'][0][u'value'];
+            intent, params = getIntentFromResponse(witIntent, witResponse)
+            return intent, params
+        if (u'reminder' in witResponse):
+            return prepareSetCalendar(witResponse)
+
         return -1;
