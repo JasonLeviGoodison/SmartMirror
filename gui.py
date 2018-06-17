@@ -14,7 +14,9 @@ import traceback
 from weather import WeatherIntent;
 from PIL import Image, ImageTk
 from contextlib import contextmanager
-
+from calendar_api import CalendarAPI
+import datetime
+import calendar
 LOCALE_LOCK = threading.Lock()
 
 ui_locale = '' # e.g. 'fr_FR' fro French, '' as default
@@ -166,6 +168,54 @@ class Weather(Frame):
 
         self.after(600000, self.get_weather)
 
+class Calendar(Frame):
+    def __init__(self, parent, *args, **kwargs):
+        Frame.__init__(self, parent, *args, **kwargs)
+        self.config(bg='black')
+        self.title = 'Upcoming Events' # 'News' is more internationally generic
+        image = Image.open("assets/calendar.jpg")
+        image = image.resize((25, 25), Image.ANTIALIAS)
+        image = image.convert('RGB')
+        photo = ImageTk.PhotoImage(image)
+
+        self.iconLbl = Label(self, bg='black', image=photo)
+        self.iconLbl.image = photo
+        self.iconLbl.pack(side=RIGHT, anchor=N)
+        self.newsLbl = Label(self, text=self.title, font=('Helvetica', medium_text_size), fg="white", bg="black")
+        self.newsLbl.pack(side=TOP, anchor=W)
+        self.headlinesContainer = Frame(self, bg="black")
+        self.headlinesContainer.pack(side=LEFT)
+        self.get_events()
+
+    def get_events(self):
+        try:
+            # remove all children
+            for widget in self.headlinesContainer.winfo_children():
+                widget.destroy()
+            events = CalendarAPI.getNextWeek()
+
+            for event in events[0:5]:
+                print(event['start']['date'])
+                dayofWeek = getDayofWeek(event['start']['date'])
+                headline = CalendarEvent(self.headlinesContainer, event['summary'] + ' on ' + dayofWeek)
+                headline.pack(side=TOP, anchor=W)
+        except Exception as e:
+            traceback.print_exc()
+            print "Error: %s. Cannot get news." % e
+
+        self.after(600000, self.get_events)
+
+def getDayofWeek(date):
+    date = datetime.date(int(date[:4]), int(date[5:7]), int(date[8:10]))
+    return calendar.day_name[date.weekday()]
+
+class CalendarEvent(Frame):
+    def __init__(self, parent, event_name=""):
+        Frame.__init__(self, parent, bg='black')
+
+        self.eventName = event_name
+        self.eventNameLbl = Label(self, text=self.eventName, font=('Helvetica', small_text_size), fg="white", bg="black")
+        self.eventNameLbl.pack(side=LEFT, anchor=N)
 
 class FullscreenWindow:
 
@@ -185,6 +235,8 @@ class FullscreenWindow:
         # weather
         self.weather = Weather(self.topFrame)
         self.weather.pack(side=LEFT, anchor=N, padx=100, pady=60)
+        self.news = Calendar(self.bottomFrame)
+        self.news.pack(side=LEFT, anchor=S, padx=100, pady=60)
         # calender - removing for now
         # self.calender = Calendar(self.bottomFrame)
         # self.calender.pack(side = RIGHT, anchor=S, padx=100, pady=60)

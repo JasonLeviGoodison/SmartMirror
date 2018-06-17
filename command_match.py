@@ -23,9 +23,9 @@ def sendMessageToWit(message):
 
 def getIntentFromResponse(intent, params = {}):
     if (intent == "greetings"):
-        return intents.GREETINGS
+        return intents.GREETINGS, None
     elif (intent == "weather"):
-        return intents.WEATHER
+        return intents.WEATHER, None
     elif (intent == 'get-calendar'):
         try:
             return intents.GET_CALENDAR_DAY, params[u'datetime'][0][u'value']
@@ -34,9 +34,9 @@ def getIntentFromResponse(intent, params = {}):
     elif (intent == 'set-calendar'):
         return prepareSetCalendar(params)
     elif (intent == 'play-music'):
-        return intents.PLAY_MUSIC
+        return intents.PLAY_MUSIC, None
     elif (intent == 'stop'):
-        return intents.STOP
+        return intents.STOP, None
     else:
         return -1
 

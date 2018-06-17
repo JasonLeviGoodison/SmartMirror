@@ -12,8 +12,8 @@ class ResponseStrings():
         self.stop = "OK"
 
         #Error handling
-        self.cant_help = "I didnt understand or can't help you with that"
-        self.timeout = "I didnt understand that, try again"
+        self.cant_help = "I did not understand or can't help you with that"
+        self.timeout = "I did not understand that, try again"
 
         # Jokes / Easter Eggs
         self.creator = "Jason Goodison made me, all hail the creator"

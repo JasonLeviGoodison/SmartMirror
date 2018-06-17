@@ -1,6 +1,6 @@
 apikey.txt
 apikey_weather.txt
-./*.pyc
+*.pyc
 client_secret.json
 credentials.json
 sentence.mp3

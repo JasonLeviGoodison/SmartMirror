@@ -7,7 +7,7 @@ from command_match import CommandMatch;
 from intent_types import *;
 from weather import WeatherIntent;
 from calendar_api import CalendarAPI;
-
+intents = Intents();
 responseStrings = ResponseStrings();
 launchPhrase = 'hey Jarvis'
 
@@ -47,8 +47,9 @@ def dealWithCommand(command):
     if (command == 'timeout'):
         respond(responseStrings.timeout)
         return;
-    intents = Intents();
+
     commandIntent, params = CommandMatch.getIntent(command);
+
     if commandIntent == intents.GREETINGS:
         respond(responseStrings.nothing_much_you);
     elif commandIntent == intents.WEATHER:
@@ -74,7 +75,8 @@ def dealWithCommand(command):
 def weatherCommand():
     weather = WeatherIntent.getWeather()
     respond = "Right now, the weather is " + weather['weather'] + \
-        " and the temperature is " + str(int(weather['temp'])) + " degrees celsius"
+        " and the temperature is " + str(int(weather['temp'])) + " degrees celsius" + \
+        " in " + weather['city']
     return respond
 
 #use the calendar api to return todays calendar

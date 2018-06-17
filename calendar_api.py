@@ -49,7 +49,6 @@ class CalendarAPI:
                 timeMin=str(today) + 'T00:00:00-07:00',
                 timeMax=str(today) + 'T12:00:00-07:00'
                 ).execute();
-            print(events)
             for event in events['items']:
                 allEvents += [event]
             page_token = events.get('nextPageToken')
