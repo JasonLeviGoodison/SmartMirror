@@ -151,14 +151,8 @@ class Weather(Frame):
                 # remove image
                 self.iconLbl.config(image='')
 
-            #if self.currently != currently2:
-            #    self.currently = currently2
             self.currentlyLbl.config(text=currently2)
-            #if self.forecast != forecast2:
-            #    self.forecast = forecast2
             self.forecastLbl.config(text=forecast2)
-            #if self.temperature != temperature2:
-            #    self.temperature = temperature2
             self.temperatureLbl.config(text=temperature2)
             self.location = weather_obj['city']
             self.locationLbl.config(text=weather_obj['city'])
@@ -172,7 +166,7 @@ class Calendar(Frame):
     def __init__(self, parent, *args, **kwargs):
         Frame.__init__(self, parent, *args, **kwargs)
         self.config(bg='black')
-        self.title = 'Upcoming Events' # 'News' is more internationally generic
+        self.title = 'Upcoming Events'
         image = Image.open("assets/calendar.jpg")
         image = image.resize((25, 25), Image.ANTIALIAS)
         image = image.convert('RGB')
@@ -193,7 +187,9 @@ class Calendar(Frame):
             for widget in self.headlinesContainer.winfo_children():
                 widget.destroy()
             events = CalendarAPI.getNextWeek()
-
+            if (events == []):
+                headline = CalendarEvent(self.headlinesContainer, "You have nothing scheduled, relax!")
+                headline.pack(side=TOP, anchor=W)
             for event in events[0:5]:
                 print(event['start']['date'])
                 dayofWeek = getDayofWeek(event['start']['date'])
@@ -201,7 +197,7 @@ class Calendar(Frame):
                 headline.pack(side=TOP, anchor=W)
         except Exception as e:
             traceback.print_exc()
-            print "Error: %s. Cannot get news." % e
+            print "Error: %s. Cannot get calendar." % e
 
         self.after(600000, self.get_events)
 
@@ -237,9 +233,6 @@ class FullscreenWindow:
         self.weather.pack(side=LEFT, anchor=N, padx=100, pady=60)
         self.news = Calendar(self.bottomFrame)
         self.news.pack(side=LEFT, anchor=S, padx=100, pady=60)
-        # calender - removing for now
-        # self.calender = Calendar(self.bottomFrame)
-        # self.calender.pack(side = RIGHT, anchor=S, padx=100, pady=60)
 
     def toggle_fullscreen(self, event=None):
         self.state = not self.state  # Just toggling the boolean
