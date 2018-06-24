@@ -13,11 +13,11 @@ launchPhrase = 'hey Jarvis'
 
 def respond(sentence):
     tts = gTTS(text=sentence, lang='en-us');
-    tts.save('sentence.mp3');
-    os.system('mpg123 sentence.mp3');
+    tts.save('assets/sentence.mp3');
+    os.system('mpg123 assets/sentence.mp3');
 
 def listening():
-    os.system('mpg123 listening.mp3');
+    os.system('mpg123 assets/listening.mp3');
 
 def listenForCommand():
     r = sr.Recognizer()
@@ -47,6 +47,9 @@ def dealWithCommand(command):
     if (command == 'timeout'):
         respond(responseStrings.timeout)
         return;
+    if (command == 'update yourself'):
+        respond("About to update")
+        update();
 
     commandIntent, params = CommandMatch.getIntent(command);
 
@@ -70,6 +73,10 @@ def dealWithCommand(command):
         respond(responseStrings.stop)
     else:
         respond(responseStrings.cant_help);
+
+def update():
+    os.system("update/update.sh");
+    return "Updated"
 
 #use the weather api to return the weather for the location
 def weatherCommand():
@@ -100,4 +107,5 @@ def calendarCommand(date):
 def setCalendar(day = "today", event = "event"):
     return responseStrings.set_calendar;
 
-listenForInitCommand()
+#listenForInitCommand()
+update()

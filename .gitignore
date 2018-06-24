@@ -3,4 +3,4 @@ apikey_weather.txt
 *.pyc
 client_secret.json
 credentials.json
-sentence.mp3
+assets/sentence.mp3
