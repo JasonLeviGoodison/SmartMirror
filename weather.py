@@ -3,7 +3,8 @@ import requests
 from darksky import forecast
 with open ("apikey_weather.txt", "r") as myfile:
     apiKey=myfile.read().replace('\n','')
-
+with open ("ip_stack_key.txt", "r") as myfile:
+    ipStackKey=myfile.read().replace('\n','')
 class WeatherIntent:
     @staticmethod
     def getLatLon(city):
@@ -15,17 +16,15 @@ class WeatherIntent:
     
     @staticmethod
     def getWeather(city = None):
-        global apiKey
+        global apiKey, ipStackKey
         if (city == None):
-            send_url = 'http://freegeoip.net/json'
+            send_url = 'http://api.ipstack.com/' + str(get_ip()) + '?access_key=' + ipStackKey
             r = requests.get(send_url)
             j = json.loads(r.text)
             lat, lon = j['latitude'], j['longitude']
-            print (lat, lon)
         else:
             lat, lon = WeatherIntent.getLatLon(city);
             cityForcast = forecast(apiKey, lat, lon)
-            print(cityForcast)
         # at this point we have to lat, lon
         url = 'https://api.darksky.net/forecast/' + apiKey + '/' + str(lat) + ',' + str(lon) + '?units=si'
         r = requests.get(url)
@@ -49,3 +48,10 @@ class WeatherIntent:
         j = json.loads(r.text)
         city = j['name']
         return city
+
+import socket
+def get_ip():
+    send_url = 'http://api.ipstack.com/check?access_key=' + ipStackKey
+    r = requests.get(send_url)
+    j = json.loads(r.text)
+    return j['ip'];

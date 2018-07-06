@@ -1,15 +1,18 @@
 from gtts import *;
 import speech_recognition as sr;
 import re;
-import os;
+from multiprocessing import Process;
+import os, glob, signal;
 from response_strings import ResponseStrings;
 from command_match import CommandMatch;
 from intent_types import *;
 from weather import WeatherIntent;
 from calendar_api import CalendarAPI;
+import music as musicApi;
 intents = Intents();
 responseStrings = ResponseStrings();
 launchPhrase = 'hey Jarvis'
+music = None # this is the global music process
 
 def respond(sentence):
     tts = gTTS(text=sentence, lang='en-us');
@@ -35,10 +38,13 @@ def listenForCommand():
             return 'timeout'
 
 def listenForInitCommand():
+    global music
     #Continually listen for a command
     while True:
         command = listenForCommand();
-        if launchPhrase == command:
+        if launchPhrase in command:
+            if (music != None):
+                os.system("killall mpg123")
             listening();
             command = listenForCommand();
             dealWithCommand(command);
@@ -47,10 +53,11 @@ def dealWithCommand(command):
     if (command == 'timeout'):
         respond(responseStrings.timeout)
         return;
+    ''' update function not yet working
     if (command == 'update yourself'):
         respond("About to update")
         update();
-
+    '''
     commandIntent, params = CommandMatch.getIntent(command);
 
     if commandIntent == intents.GREETINGS:
@@ -68,11 +75,24 @@ def dealWithCommand(command):
         CalendarAPI.setCalendarEvent({'summary': params[1], 'datetime': params[0][:params[0].index('T')]})
         respond(responseStrings.set_calendar)
     elif commandIntent == intents.PLAY_MUSIC:
-        respond("i'll play some music");
+        respond("Sure, let me download it")
+        playMusicCommand(params)
     elif commandIntent == intents.STOP:
         respond(responseStrings.stop)
     else:
         respond(responseStrings.cant_help);
+
+def playMusicCommand(params):
+    global music
+    print(params)
+    musicApi.downloadSongFromYoutube(params)
+    for file in glob.glob("*.mp3"):
+        os.rename(file, "test.mp3")
+        music = Process(target=function)
+        music.start()
+        return 
+def function():
+    os.system('mpg123 test.mp3')
 
 def update():
     os.system("update/update.sh");
@@ -107,5 +127,4 @@ def calendarCommand(date):
 def setCalendar(day = "today", event = "event"):
     return responseStrings.set_calendar;
 
-#listenForInitCommand()
-update()
+listenForInitCommand()

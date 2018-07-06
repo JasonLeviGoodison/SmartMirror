@@ -34,13 +34,13 @@ def getIntentFromResponse(intent, params = {}):
     elif (intent == 'set-calendar'):
         return prepareSetCalendar(params)
     elif (intent == 'play-music'):
-        return intents.PLAY_MUSIC, None
+        print ("play music params", params)
+        return intents.PLAY_MUSIC, params[u'reminder']
     elif (intent == 'stop'):
         return intents.STOP, None
     else:
         return -1
 
-#intentTypes = Intents();
 def prepareSetCalendar(params):
     value = params[u'reminder'][0][u'value']
     try:
@@ -53,6 +53,8 @@ def prepareSetCalendar(params):
 class CommandMatch:
     @staticmethod
     def getIntent(command):
+        if (command.split(' ')[0] == 'play'):
+            return intents.PLAY_MUSIC, ' '.join(word for word in command.split(' ')[1:])
         witResponse = json.loads(sendMessageToWit(command));
         witResponse = witResponse[u'entities']
         if (u'intent' in witResponse):
