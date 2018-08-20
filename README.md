@@ -20,5 +20,7 @@ The main difference is that you can ask Jarvis to set calendar events for you. S
 it will show up on the mirror in < 15 minutes. If you ask Jarvis for your events for the day, it will be up to date with the
 new event you just added.
 
+The assistant can also play music for you. If you say "play Sandra's Rose" it will download an mp3 of your requested song from Youtube, play it, and then delete the file. If you say "Hey Jarvis" at anytime during playback, it will kill the music (there is no pause/fastforward/rewind functionality).
+
 ### Set up
  // TODO
