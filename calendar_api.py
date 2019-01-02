@@ -46,9 +46,10 @@ class CalendarAPI:
             events = service.events().list(
                 calendarId='primary', 
                 pageToken=page_token, 
-                timeMin=str(today) + 'T00:00:00-07:00',
-                timeMax=str(today) + 'T12:00:00-07:00'
+                timeMin=str(today) + 'T00:00:00-00:00',
+                timeMax=str(today) + 'T23:59:59-00:00'
                 ).execute();
+
             for event in events['items']:
                 allEvents += [event]
             page_token = events.get('nextPageToken')

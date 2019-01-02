@@ -15,12 +15,12 @@ launchPhrase = 'hey Jarvis'
 music = None # this is the global music process
 
 def respond(sentence):
-    tts = gTTS(text=sentence, lang='en-us');
-    tts.save('assets/sentence.mp3');
+    tts = gTTS(text=sentence);
+    tts.save('./assets/sentence.mp3');
     os.system('mpg123 assets/sentence.mp3');
 
 def listening():
-    os.system('mpg123 assets/listening.mp3');
+    respond("Whats up?")
 
 def listenForCommand():
     r = sr.Recognizer()
