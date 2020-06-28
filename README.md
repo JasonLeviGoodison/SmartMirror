@@ -1,3 +1,6 @@
+## Updated:
+Recently, I re-imagined this project using react for the front end and wrapping it in an electron app. I still intend to run the voice assistant from this project as a way of managing your calendar. The updated UI is in the screen shot
+
 # SmartMirror
 The intention of this application is to load it on a raspberry pi and put a display behind a mirror. 
 The assistant will display/tell you about information like weather and calendar events.
